@@ -30,7 +30,7 @@ class simulator(object):
 
         self.parameters = [[1, 0, 0], [0, 1, 0], [0, 0, 1], [1, 1, 0], [1, 0, 1], [0, 1, 1], [1, 1, 1]]
 
-    def reset(self, state):  # state:region_num*8
+    def reset(self, state): # state:region_num*8
         print('\nReseting...')
         self.nodes = list()
         for i in range(self.region_num):

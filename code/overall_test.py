@@ -3,6 +3,7 @@ import json
 import torch
 import os
 from simulator import simulator
+from utils.merge import merge
 
 class RL_test(object):
     def __init__(self,
@@ -14,31 +15,30 @@ class RL_test(object):
                 interval=48,
                 repeat=10,
                 city='city_sample'):
-        self.bed_total = bed_total
-        self.mask_total = mask_total
-        self.mask_quality = mask_quality
-        self.mask_lasting = mask_lasting
-        self.steps = steps
-        self.interval = interval
-        self.repeat = repeat
-        self.city = city
+        self.bed_total=bed_total
+        self.mask_total=mask_total
+        self.mask_quality=mask_quality
+        self.mask_lasting=mask_lasting
+        self.steps=steps
+        self.interval=interval
+        self.repeat=repeat
+        self.city=city
 
-        # data loading
-        with open(os.path.join('../data', self.city, 'start.json'), 'r') as f:
-            self.start = np.array(json.load(f))
-        print(self.start)
-        self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+        #data loading
+        with open(os.path.join('../data',self.city,'start.json'),'r') as f:
+            self.start=np.array(json.load(f))
+        self.device=torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-        # simulator initialization
+        #simulator initialization
         self.simulator = simulator(city=self.city)
 
         from Net.Anet import Anet
         from Net.Qnet import Qnet
         from Net.RNN import RNN
-        self.region_num = 673 # supposed to be modified according to the number of regions in the studied city
+        self.region_num = 673 #Supposed to be modified according to the number of regions in the studied city.
 
-        # models loading
-        self.Bed_action = Qnet.to(self.device)
+        #models loading
+        self.Bed_action=Qnet().to(self.device)
         self.Bed_action.load_state_dict(torch.load(os.path.join('../model',self.city,'bed_action_model.pth')))
         self.Bed_action.eval()
         self.Mask_action=Qnet().to(self.device)
@@ -61,10 +61,8 @@ class RL_test(object):
         self.R_RNN=RNN().to(self.device)
         self.R_RNN.load_state_dict(torch.load(os.path.join('../model',self.city,'R_RNN.pth')))
         self.R_RNN.eval()
-    
-    def test(self):
-        from utils.merge import merge
 
+    def test(self):
         for ti in range(self.repeat):
             self.simulator.reset(self.start)
             self.current_state = self.start
@@ -75,9 +73,8 @@ class RL_test(object):
 
             action_record=list()
             perc_record=list()
-
             for step in range(self.steps):
-                info_perfect = torch.FloatTensor(self.current_state).to(self.device).unsqueeze(0)*0.001 # 1*region_num*8
+                info_perfect = torch.FloatTensor(self.current_state).to(self.device).unsqueeze(0)*0.001#1*region_num*8
 
                 L_rebuild, L_h0 = self.L_RNN(info_perfect[:,:,3].unsqueeze(2).permute(0,2,1), L_h0,is_eval=True)
                 L_rebuild = L_rebuild.clamp_min(0).round()
@@ -109,9 +106,15 @@ class RL_test(object):
                 print('Testing:{}/{}\n'.format(step+1,self.steps))
                 self.current_state=self.next_state
 
+            '''
+            with open(os.path.join('../result',self.city,'all_action{}.json'.format(ti)),'w') as f:
+                json.dump(action_record,f)
+            with open(os.path.join('../result',self.city,'all_perc{}.json'.format(ti)),'w') as f:
+                json.dump(perc_record, f)
+            '''
             merge(self.steps*self.interval,'overall_'+str(ti)+'.json',self.city)
 
 if __name__ == "__main__":
     os.chdir(os.path.split(os.path.realpath(__file__))[0])
-    test_platform = RL_test()
+    test_platform=RL_test()
     test_platform.test()
