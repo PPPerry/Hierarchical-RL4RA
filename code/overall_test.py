@@ -76,14 +76,14 @@ class RL_test(object):
             for step in range(self.steps):
                 info_perfect = torch.FloatTensor(self.current_state).to(self.device).unsqueeze(0)*0.001#1*region_num*8
 
-                L_rebuild, L_h0 = self.L_RNN(info_perfect[:,:,3].unsqueeze(2).permute(0,2,1), L_h0,is_eval=True)
-                L_rebuild = L_rebuild.clamp_min(0).round()
-                Iut_rebuild, Iut_h0 = self.Iut_RNN(info_perfect[:,:, 3].unsqueeze(2).permute(0, 2, 1), Iut_h0, is_eval=True)
-                Iut_rebuild = Iut_rebuild.clamp_min(0).round()
-                R_rebuild, R_h0 = self.R_RNN(info_perfect[:,:, -1].unsqueeze(2).permute(0, 2, 1), R_h0, is_eval=True)
-                R_rebuild = R_rebuild.clamp_min(0).round()
+                # L_rebuild, L_h0 = self.L_RNN(info_perfect[:,:,3].unsqueeze(2).permute(0,2,1), L_h0,is_eval=True)
+                # L_rebuild = L_rebuild.clamp_min(0).round()
+                # Iut_rebuild, Iut_h0 = self.Iut_RNN(info_perfect[:,:, 3].unsqueeze(2).permute(0, 2, 1), Iut_h0, is_eval=True)
+                # Iut_rebuild = Iut_rebuild.clamp_min(0).round()
+                # R_rebuild, R_h0 = self.R_RNN(info_perfect[:,:, -1].unsqueeze(2).permute(0, 2, 1), R_h0, is_eval=True)
+                # R_rebuild = R_rebuild.clamp_min(0).round()
 
-                info_rebuild = torch.cat((L_rebuild.permute(0,2,1), Iut_rebuild.permute(0,2,1), info_perfect[:,:, 3].unsqueeze(2), info_perfect[:,:, 5].unsqueeze(2), R_rebuild.permute(0,2,1), info_perfect[:,:, -1].unsqueeze(2)), dim=2)*1000
+                info_rebuild = torch.cat((info_perfect[:,:, 1].unsqueeze(2), info_perfect[:,:, 2].unsqueeze(2), info_perfect[:,:, 3].unsqueeze(2), info_perfect[:,:, 5].unsqueeze(2), info_perfect[:,:, -2].unsqueeze(2), info_perfect[:,:, -1].unsqueeze(2)), dim=2)*1000
 
                 bed_action_out = self.Bed_action(info_rebuild)
                 mask_action_out = self.Mask_action(info_rebuild)

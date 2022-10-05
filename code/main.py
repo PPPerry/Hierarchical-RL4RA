@@ -52,15 +52,15 @@ class RL_test(object):
         self.Mask_Actor.load_state_dict(torch.load(os.path.join('../model',self.city,'mask_Actor_model.pth')))
         self.Mask_Actor.eval()
 
-        self.L_RNN=RNN().to(self.device)
-        self.L_RNN.load_state_dict(torch.load(os.path.join('../model',self.city,'L_RNN.pth')))
-        self.L_RNN.eval()
-        self.Iut_RNN=RNN().to(self.device)
-        self.Iut_RNN.load_state_dict(torch.load(os.path.join('../model',self.city,'Iut_RNN.pth')))
-        self.Iut_RNN.eval()
-        self.R_RNN=RNN().to(self.device)
-        self.R_RNN.load_state_dict(torch.load(os.path.join('../model',self.city,'R_RNN.pth')))
-        self.R_RNN.eval()
+        # self.L_RNN=RNN().to(self.device)
+        # self.L_RNN.load_state_dict(torch.load(os.path.join('../model',self.city,'L_RNN.pth')))
+        # self.L_RNN.eval()
+        # self.Iut_RNN=RNN().to(self.device)
+        # self.Iut_RNN.load_state_dict(torch.load(os.path.join('../model',self.city,'Iut_RNN.pth')))
+        # self.Iut_RNN.eval()
+        # self.R_RNN=RNN().to(self.device)
+        # self.R_RNN.load_state_dict(torch.load(os.path.join('../model',self.city,'R_RNN.pth')))
+        # self.R_RNN.eval()
     
     def test(self):
         from utils.merge import merge
@@ -69,9 +69,9 @@ class RL_test(object):
             self.simulator.reset(self.start)
             self.current_state = self.start
 
-            L_h0 = torch.zeros(self.L_RNN.num_layers, 1, self.L_RNN.hidden_size).to(self.device)
-            Iut_h0 = torch.zeros(self.Iut_RNN.num_layers, 1, self.Iut_RNN.hidden_size).to(self.device)
-            R_h0 = torch.zeros(self.R_RNN.num_layers, 1, self.R_RNN.hidden_size).to(self.device)
+            # L_h0 = torch.zeros(self.L_RNN.num_layers, 1, self.L_RNN.hidden_size).to(self.device)
+            # Iut_h0 = torch.zeros(self.Iut_RNN.num_layers, 1, self.Iut_RNN.hidden_size).to(self.device)
+            # R_h0 = torch.zeros(self.R_RNN.num_layers, 1, self.R_RNN.hidden_size).to(self.device)
 
             action_record=list()
             perc_record=list()
@@ -86,7 +86,7 @@ class RL_test(object):
                 R_rebuild, R_h0 = self.R_RNN(info_perfect[:,:, -1].unsqueeze(2).permute(0, 2, 1), R_h0, is_eval=True)
                 R_rebuild = R_rebuild.clamp_min(0).round()
 
-                info_rebuild = torch.cat((L_rebuild.permute(0,2,1), Iut_rebuild.permute(0,2,1), info_perfect[:,:, 3].unsqueeze(2), info_perfect[:,:, 5].unsqueeze(2), R_rebuild.permute(0,2,1), info_perfect[:,:, -1].unsqueeze(2)), dim=2)*1000
+                info_rebuild = torch.cat((L_rebuild.permute(0,2,1), Iut_rebuild.permute(0,2,1), info_perfect[:,:, 3].unsqueeze(2), info_perfect[:,:, 5].unsqueeze(2), R_rebuild.permute(0,2,1), info_perfect[:,:, -1].unsqueeze(2)), dim=2)*1000 # 为什么只要六维
 
                 bed_action_out = self.Bed_action(info_rebuild)
                 mask_action_out = self.Mask_action(info_rebuild)
