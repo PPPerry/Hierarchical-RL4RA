@@ -37,7 +37,7 @@ list_pop = pop.tolist()
 json_pop = json.dumps(list_pop)
 print("pop:")
 print(list_pop)
-with open('data/city_sample/pop.json', 'w') as f:
+with open('data/city_sample/pop_region.json', 'w') as f:
     f.write(json_pop)
 
 start = np.zeros((16, 8))
@@ -50,6 +50,8 @@ print(list_start)
 with open('data/city_sample/start.json', 'w') as f:
     f.write(json_start) 
 
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+# device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+device = torch.device('cuda', 1)
 print("device:")
 print(device)
+print(torch.cuda.current_device())

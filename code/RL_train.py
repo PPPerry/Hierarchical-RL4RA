@@ -51,7 +51,7 @@ class RL_train(object):
         from Net.Anet import Anet
         from Net.Qnet import Qnet
         from Net.Cnet import Cnet
-        self.region_num = 673 #Supposed to be modified according to the number of regions in the studied city.
+        self.region_num = 16  #Supposed to be modified according to the number of regions in the studied city.
 
         self.pool_pointer=0
         self.pool_count=0
@@ -70,6 +70,7 @@ class RL_train(object):
         torch.manual_seed(1234)
         torch.cuda.manual_seed(1234)
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+        # self.device = torch.device('cuda', 1)
 
         self.Bed_action_eval=Qnet().to(self.device)
         self.Bed_action_eval.train()
