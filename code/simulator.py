@@ -92,6 +92,13 @@ class simulator(object):
             It_temp = np.zeros((self.region_num, self.region_num + 1))
         Ia_temp = np.zeros((self.region_num, self.region_num + 1))
         R_temp = np.zeros((self.region_num, self.region_num + 1))
+        # S_temp = np.zeros((self.region_num, self.region_num))
+        # L_temp = np.zeros((self.region_num, self.region_num))
+        # Iut_temp = np.zeros((self.region_num, self.region_num))
+        # if it_move:
+        #     It_temp = np.zeros((self.region_num, self.region_num))
+        # Ia_temp = np.zeros((self.region_num, self.region_num))
+        # R_temp = np.zeros((self.region_num, self.region_num))
 
         Ih_new = 0
         for time in range(interval):
@@ -301,21 +308,22 @@ class simulator(object):
             else:
                 self.full = True
 
+            
             #cross region traveling
-            for k in range(self.region_num):
+            for k in range(self.region_num):       
                 S_temp[k] = np.random.multinomial(
-                    self.nodes[k].susceptible, self.prob[((self.START-1)*48+time) % (7*48)][k])
+                    self.nodes[k].susceptible, np.append(np.zeros(1), self.prob[((self.START-1)*48+time) % (7*48)][k]))
                 L_temp[k] = np.random.multinomial(
-                    self.nodes[k].latent, self.prob[((self.START-1)*48+time) % (7*48)][k])
+                    self.nodes[k].latent, np.append(np.zeros(1), self.prob[((self.START-1)*48+time) % (7*48)][k]))
                 Iut_temp[k] = np.random.multinomial(
-                    self.nodes[k].infected_ut, self.prob[((self.START - 1)* 48 + time) % (7* 48)][k])
+                    self.nodes[k].infected_ut, np.append(np.zeros(1), self.prob[((self.START-1)*48+time) % (7*48)][k]))
                 if it_move:
                     It_temp[k] = np.random.multinomial(
-                        self.nodes[k].infected_t, self.prob[((self.START-1)*48+time) % (7*48)][k])
+                        self.nodes[k].infected_t, np.append(np.zeros(1), self.prob[((self.START-1)*48+time) % (7*48)][k]))
                 Ia_temp[k] = np.random.multinomial(
-                    self.nodes[k].infected_asymptomatic, self.prob[((self.START - 1)* 48 + time) % (7* 48)][k])
+                    self.nodes[k].infected_asymptomatic, np.append(np.zeros(1), self.prob[((self.START-1)*48+time) % (7*48)][k]))
                 R_temp[k] = np.random.multinomial(
-                    self.nodes[k].recovered, self.prob[((self.START - 1)* 48 + time) % (7* 48)][k])
+                    self.nodes[k].recovered, np.append(np.zeros(1), self.prob[((self.START-1)*48+time) % (7*48)][k]))
 
             S_temp_sum0 = np.sum(S_temp, axis=0)
             L_temp_sum0 = np.sum(L_temp, axis=0)
