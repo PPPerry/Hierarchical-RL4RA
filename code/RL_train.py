@@ -51,7 +51,7 @@ class RL_train(object):
         from Net.Anet import Anet
         from Net.Qnet import Qnet
         from Net.Cnet import Cnet
-        self.region_num = 16  #Supposed to be modified according to the number of regions in the studied city.
+        self.region_num = 673  #Supposed to be modified according to the number of regions in the studied city.
 
         self.pool_pointer=0
         self.pool_count=0
@@ -128,6 +128,7 @@ class RL_train(object):
             step_count=0
             while ((not self.is_end) and step_count <= 60/(self.interval/48)):
                 #estimating the long term reward of each action
+                print("step: ", step_count)
                 bed_action_out = self.Bed_action_eval(torch.FloatTensor(self.current_state[:,[1,2,3,5,6,7]]).to(self.device).unsqueeze(0))
                 mask_action_out = self.Mask_action_eval(torch.FloatTensor(self.current_state[:,[1,2,3,5,6,7]]).to(self.device).unsqueeze(0))
 
